@@ -50,3 +50,80 @@ test("Overlapping ship placement", () => {
 
     expect(() => board.placeShip(ship2, [0, 0])).toThrow(Error);
 });
+
+test("Valid attack", () => {
+    const board = GameBoard();
+    const ship = Ship(3, false);
+
+    board.placeShip(ship, [0,0]);
+    board.receiveAttack([0,0]);
+
+    expect(board.grid[0][0].value).toBe(HIT);
+});
+
+test("Valid miss", () => {
+    const board = GameBoard();
+    const ship = Ship(3, false);
+
+    board.placeShip(ship, [0,0]);
+    board.receiveAttack([9,0]);
+
+    expect(board.grid[9][0].value).toBe(MISS);
+});
+
+test("Overlapping hit", () => {
+    const board = GameBoard();
+    const ship = Ship(3, false);
+
+    board.placeShip(ship, [0,0]);
+    board.receiveAttack([0,0]);
+
+    expect(() => board.receiveAttack([0,0])).toThrow(Error);
+});
+
+test("Overlapping miss", () => {
+    const board = GameBoard();
+    const ship = Ship(3, false);
+
+    board.placeShip(ship, [0,0]);
+    board.receiveAttack([9,0]);
+    
+    expect(() => board.receiveAttack([9,0])).toThrow(Error);
+});
+
+test("Single ship sunk", () => {
+    const board = GameBoard();
+    const ship = Ship(3, false);
+
+    board.placeShip(ship, [0,0]);
+    board.receiveAttack([0,0]);
+    board.receiveAttack([1,0]);
+    board.receiveAttack([2,0]);
+    
+    expect(board.allSunk()).toBe(true);
+});
+
+test("All ships not sunk", () => {
+    const board = GameBoard();
+    const ship1 = Ship(1, false);
+    const ship2 = Ship(1, false);
+
+    board.placeShip(ship1, [0,0]);
+    board.placeShip(ship2, [1,0]);
+    board.receiveAttack([0,0]);
+    
+    expect(board.allSunk()).toBe(false);
+});
+
+test("All ships sunk", () => {
+    const board = GameBoard();
+    const ship1 = Ship(1, false);
+    const ship2 = Ship(1, false);
+
+    board.placeShip(ship1, [0,0]);
+    board.placeShip(ship2, [1,0]);
+    board.receiveAttack([0,0]);
+    board.receiveAttack([1,0]);
+    
+    expect(board.allSunk()).toBe(true);
+});

@@ -38,8 +38,27 @@ export function GameBoard() {
         });
     }
 
+    function receiveAttack(attackCoord) {
+        const [row, col] = attackCoord;
+
+        if (grid[row][col].value === MISS) throw new Error("Already missed at this coordinate.");
+        if (grid[row][col].value === HIT) throw new Error("Already hit at this coordinate.");
+
+        if (grid[row][col].value === SHIP) {
+            grid[row][col].value = HIT;
+            ships.get(grid[row][col].id).hit();
+        }
+        else grid[row][col].value = MISS;
+    }
+
+    function allSunk() {
+        return [...ships.values()].every(ship => ship.isSunk());
+    }
+
     return {
         get grid() {return grid},
         placeShip,
+        receiveAttack,
+        allSunk
     }
 }
