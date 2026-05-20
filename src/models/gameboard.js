@@ -17,21 +17,22 @@ export function GameBoard() {
 
     if (ship.isVertical) {
       for (let i = 1; i < ship.getLength(); i++) {
-        if (col + i >= BOARD_SIZE) {
-          throw new Error("Invalid Ship Placement.");
-        }
-        placementCoords.push([row, col + i]);
-      }
-    } else {
-      for (let i = 1; i < ship.getLength(); i++) {
         if (row + i >= BOARD_SIZE) {
           throw new Error("Invalid Ship Placement.");
         }
         placementCoords.push([row + i, col]);
       }
+    } else {
+      for (let i = 1; i < ship.getLength(); i++) {
+        if (col + i >= BOARD_SIZE) {
+          throw new Error("Invalid Ship Placement.");
+        }
+        placementCoords.push([row, col + i]);
+      }
     }
 
     if (placementCoords.some(([r, c]) => grid[r][c].value === SHIP)) {
+      console.log("overlap detected at", placementCoords);
       throw new Error("Ships cannot overlap.");
     }
 

@@ -1,4 +1,4 @@
-import { BOARD_SIZE } from "./models/gameboard";
+import { BOARD_SIZE, MISS, HIT, SHIP } from "./models/gameboard";
 
 export function renderBoard(board) {
   for (let row = 0; row < BOARD_SIZE; row++) {
@@ -18,11 +18,24 @@ export function renderShipOptions(shipContainer, ships) {
     shipDiv.classList.add("ship");
     shipDiv.dataset.name = ship.name;
 
-    for (let i = 0; i < ship.length; i++) {
+    for (let i = 0; i < ship.size; i++) {
       const grid = document.createElement("div");
       shipDiv.appendChild(grid);
     }
 
     shipContainer.appendChild(shipDiv);
+  });
+}
+
+export function renderGameBoard(boardElement, gameBoard) {
+  gameBoard.grid.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      const cellEl = boardElement.querySelector(
+        `[data-row="${rowIndex}"][data-col="${colIndex}"]`,
+      );
+      if (cell.value === SHIP) cellEl.classList.add("placed");
+      if (cell.value === HIT) cellEl.classList.add("hit");
+      if (cell.value === MISS) cellEl.classList.add("miss");
+    });
   });
 }
