@@ -9,9 +9,9 @@ test("Valid horizontal ship placement", () => {
   const grid = board.grid;
 
   expect(grid[0][0].value).toBe(SHIP);
-  expect(grid[1][0].value).toBe(SHIP);
-  expect(grid[2][0].value).toBe(SHIP);
-  expect(grid[3][0].value).toBe(null);
+  expect(grid[0][1].value).toBe(SHIP);
+  expect(grid[0][2].value).toBe(SHIP);
+  expect(grid[0][3].value).toBe(null);
 });
 
 test("Valid vertical ship placement", () => {
@@ -22,23 +22,23 @@ test("Valid vertical ship placement", () => {
   const grid = board.grid;
 
   expect(grid[0][0].value).toBe(SHIP);
-  expect(grid[0][1].value).toBe(SHIP);
-  expect(grid[0][2].value).toBe(SHIP);
-  expect(grid[0][3].value).toBe(null);
+  expect(grid[1][0].value).toBe(SHIP);
+  expect(grid[2][0].value).toBe(SHIP);
+  expect(grid[3][0].value).toBe(null);
 });
 
 test("Invalid horizontal ship placement", () => {
   const board = GameBoard();
   const ship = Ship(3, false);
 
-  expect(() => board.placeShip(ship, [BOARD_SIZE - 1, 0])).toThrow(Error);
+  expect(() => board.placeShip(ship, [0, BOARD_SIZE - 1])).toThrow(Error);
 });
 
 test("Invalid vertical ship placement", () => {
   const board = GameBoard();
   const ship = Ship(3, true);
 
-  expect(() => board.placeShip(ship, [0, BOARD_SIZE - 1])).toThrow(Error);
+  expect(() => board.placeShip(ship, [BOARD_SIZE - 1, 0])).toThrow(Error);
 });
 
 test("Overlapping ship placement", () => {
@@ -97,8 +97,8 @@ test("Single ship sunk", () => {
 
   board.placeShip(ship, [0, 0]);
   board.receiveAttack([0, 0]);
-  board.receiveAttack([1, 0]);
-  board.receiveAttack([2, 0]);
+  board.receiveAttack([0, 1]);
+  board.receiveAttack([0, 2]);
 
   expect(board.allSunk()).toBe(true);
 });
