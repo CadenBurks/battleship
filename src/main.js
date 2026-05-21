@@ -1,8 +1,6 @@
-import { BOARD_SIZE } from "./models/gameboard";
-import { Ship } from "./models/ship";
-import { Player } from "./models/player";
 import { renderBoard, renderGameBoard, renderShipOptions } from "./render";
 import { initPlacement } from "./placement";
+import { startGame, waitForAttack } from "./game";
 
 const ships = [
   { name: "carrier", size: 5, placed: false, coord: null, vertical: false },
@@ -21,46 +19,32 @@ const ships = [
 const board = document.querySelector(".board");
 const shipContainer = document.querySelector(".ship-container");
 const startBtn = document.querySelector(".start");
+const playerBoard = document.querySelector(".player-board");
+const computerBoard = document.querySelector(".computer-board");
+const playerDiv = document.querySelector(".player");
+const restartBtn = document.querySelector(".restart");
 
 renderBoard(board);
 renderShipOptions(shipContainer, ships);
 initPlacement(ships, board);
 
-function randomComputerShips(player) {
-  ships.forEach((shipData) => {
-    const ship = Ship(shipData.size, Math.round(Math.random()));
-
-    let placed = false;
-    while (!placed) {
-      try {
-        const coord = [
-          Math.floor(Math.random() * BOARD_SIZE),
-          Math.floor(Math.random() * BOARD_SIZE),
-        ];
-        player.board.placeShip(ship, coord);
-        placed = true;
-      } catch {
-        // invalid
-      }
-    }
-  });
+async function gameLoop(player, computer) {
+  while (!player.board.allSunk() && !computer.board.allSunk()) {
+    const coord = await waitForAttack(computerBoard);
+    computer.board.receiveAttack(coord);
+    renderGameBoard(computerBoard, computer.board, true);
+    computer.attack(player.board);
+    renderGameBoard(playerBoard, player.board);
+  }
+  const message = computer.board.allSunk() ? "Player Wins!" : "Computer Wins!";
+  alert(message);
+  restartBtn.classList.remove("hidden");
 }
 
 startBtn.addEventListener("click", () => {
   console.log("START clicked");
-  const player = Player();
-  const playerShips = ships.map((ship) => [
-    Ship(ship.size, ship.vertical),
-    ship.coord,
-  ]);
-  playerShips.forEach((ship, i) => {
-    player.board.placeShip(ship[0], ship[1]);
-  });
+  const [player, computer] = startGame(ships);
 
-  const computer = Player(true);
-  randomComputerShips(computer);
-
-  const playerDiv = document.querySelector(".player");
   playerDiv.classList.add("hidden");
   shipContainer.classList.add("hidden");
   startBtn.classList.add("hidden");
@@ -68,9 +52,14 @@ startBtn.addEventListener("click", () => {
   const game = document.querySelector(".game");
   game.classList.remove("hidden");
 
-  const playerBoard = document.querySelector(".player-board");
-  const computerBoard = document.querySelector(".computer-board");
   renderBoard(playerBoard);
   renderGameBoard(playerBoard, player.board);
   renderBoard(computerBoard);
+  renderGameBoard(computerBoard, computer.board, true);
+
+  gameLoop(player, computer);
+});
+
+restartBtn.addEventListener("click", () => {
+  location.reload();
 });

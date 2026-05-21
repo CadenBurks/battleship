@@ -95,7 +95,7 @@ button:enabled:hover {
   background-color: blue;
 }
 
-.start:disabled {
+button:disabled {
   cursor: default;
   background-color: gray;
 }
@@ -107,4 +107,12 @@ button:enabled:hover {
 .game {
   display: flex;
   gap: 20px;
+}
+
+.board .cell.miss {
+  background-color: lightgray;
+}
+
+.board .cell.hit {
+  background-color: red;
 }

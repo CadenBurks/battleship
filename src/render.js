@@ -27,13 +27,28 @@ export function renderShipOptions(shipContainer, ships) {
   });
 }
 
-export function renderGameBoard(boardElement, gameBoard) {
+export function renderGameBoard(boardElement, gameBoard, isComputer) {
+  boardElement.querySelectorAll(".cell").forEach((cell) => {
+    cell.classList.remove("placed", "hit", "miss");
+  });
+
   gameBoard.grid.forEach((row, rowIndex) => {
     row.forEach((cell, colIndex) => {
+      if (cell.value !== null) {
+        console.log(
+          rowIndex,
+          colIndex,
+          cell.value,
+          typeof cell.value,
+          SHIP,
+          HIT,
+          MISS,
+        );
+      }
       const cellEl = boardElement.querySelector(
         `[data-row="${rowIndex}"][data-col="${colIndex}"]`,
       );
-      if (cell.value === SHIP) cellEl.classList.add("placed");
+      if (cell.value === SHIP && !isComputer) cellEl.classList.add("placed");
       if (cell.value === HIT) cellEl.classList.add("hit");
       if (cell.value === MISS) cellEl.classList.add("miss");
     });
